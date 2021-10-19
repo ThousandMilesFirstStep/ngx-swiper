@@ -1,0 +1,74 @@
+<div class="swiper" #swiper>
+  <div class="swiper__container" #swiperContainer>
+    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+      <ng-container
+        [ngTemplateOutlet]="defaultSlide"
+        [ngTemplateOutletContext]="{ $implicit: images[images.length - 1] }"
+      ></ng-container>
+    </div>
+
+    <div
+      class="swiper__slide"
+      *ngFor="let image of images; index as index; first as first; last as last"
+      #swiperSlide
+    >
+      <ng-container
+        [ngTemplateOutlet]="defaultSlide"
+        [ngTemplateOutletContext]="{ $implicit: image }"
+      ></ng-container>
+    </div>
+
+    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+      <ng-container
+        [ngTemplateOutlet]="defaultSlide"
+        [ngTemplateOutletContext]="{ $implicit: images[0] }"
+      ></ng-container>
+    </div>
+  </div>
+
+  <div
+    class="swiper__navigation--prev"
+    *ngIf="navigation"
+    (click)="prevSlide()"
+  >
+    <ng-container
+      [ngTemplateOutlet]="navigationButtonTemplate || defaultNavigationButton"
+    ></ng-container>
+  </div>
+
+  <div
+    class="swiper__navigation--next"
+    *ngIf="navigation"
+    (click)="nextSlide()"
+  >
+    <ng-container
+      [ngTemplateOutlet]="navigationButtonTemplate || defaultNavigationButton"
+    ></ng-container>
+  </div>
+
+  <ng-container
+    *ngIf="pagination"
+    [ngTemplateOutlet]="paginationTemplate || defaultPagination"
+  ></ng-container>
+</div>
+
+<ng-template #defaultSlide let-image>
+  <img class="swiper__image" [src]="image" loading="lazy" />
+</ng-template>
+
+<ng-template #defaultNavigationButton>
+  <div class="swiper__navigationButton">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.5 6.42085L11.3167 10.2458L7.5 14.0708L8.675 15.2458L13.675 10.2458L8.675 5.24585L7.5 6.42085Z"
+      ></path>
+    </svg>
+  </div>
+</ng-template>
+
+<ng-template #defaultPagination></ng-template>

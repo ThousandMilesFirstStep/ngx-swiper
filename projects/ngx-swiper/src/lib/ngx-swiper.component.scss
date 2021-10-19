@@ -1,0 +1,67 @@
+:host {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.swiper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  &__container {
+    height: 100%;
+    width: fit-content;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  &__slide {
+    height: 100%;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  &__image {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__navigation--prev,
+  &__navigation--next {
+    position: absolute;
+    top: 50%;
+  }
+
+  &__navigation--prev {
+    left: 15px;
+    transform: translateY(-50%) rotateZ(180deg);
+  }
+
+  &__navigation--next {
+    right: 15px;
+    transform: translateY(-50%);
+  }
+
+  &__navigationButton {
+    width: 40px;
+    height: 40px;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.4s;
+    border-radius: 100%;
+    cursor: pointer;
+  }
+
+  &:hover {
+    .swiper__navigationButton {
+      opacity: 0.85;
+    }
+  }
+}
