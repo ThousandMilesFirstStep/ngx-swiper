@@ -31,6 +31,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() paginationTemplate?: TemplateRef<any>;
 
   @Input() transitionDuration = 400;
+  @Input() threshold = 30;
 
   @ViewChild('swiper') swiperRef!: ElementRef<HTMLDivElement>;
   @ViewChild('swiperContainer') swiperContainerRef!: ElementRef<HTMLDivElement>;
@@ -79,9 +80,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.currentSlide++;
 
-    const translation = -1 * this.slideWidth * (this.currentSlide + 1);
-
-    this.translateContainer(translation);
+    this.translateContainer(this.getCurrentTranslation());
   }
 
   prevSlide(): void {
@@ -93,9 +92,33 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.currentSlide--;
 
-    const translation = -1 * this.slideWidth * (this.currentSlide + 1);
+    this.translateContainer(this.getCurrentTranslation());
+  }
 
-    this.translateContainer(translation);
+  onPanEnd(event: any): void {
+    if (event.deltaX < -1 * this.threshold) {
+      this.nextSlide();
+    } else if (event.deltaX > this.threshold) {
+      this.prevSlide();
+    } else {
+      this.translateContainer(this.getCurrentTranslation());
+    }
+  }
+
+  onPanLeft(event: any): void {
+    const originalPosition = this.getCurrentTranslation();
+
+    this.setContainerTranslation(originalPosition + event.deltaX);
+  }
+
+  onPanRight(event: any): void {
+    const originalPosition = this.getCurrentTranslation();
+
+    this.setContainerTranslation(originalPosition + event.deltaX);
+  }
+
+  private getCurrentTranslation(): number {
+    return -1 * this.slideWidth * (this.currentSlide + 1);
   }
 
   private nextSlideOnLastElement(): void {
@@ -108,9 +131,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setContainerTranslation(-1 * this.slideWidth);
 
     setTimeout(() => {
-      const translation = -1 * this.slideWidth * (this.currentSlide + 1);
-
-      this.translateContainer(translation);
+      this.translateContainer(this.getCurrentTranslation());
     }, 0);
   }
 
@@ -124,9 +145,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setContainerTranslation(-1 * this.slideWidth * this.images.length);
 
     setTimeout(() => {
-      const translation = -1 * this.slideWidth * (this.currentSlide + 1);
-
-      this.translateContainer(translation);
+      this.translateContainer(this.getCurrentTranslation());
     }, 0);
   }
 

@@ -1,6 +1,12 @@
 <div class="swiper" #swiper>
   <div class="swiper__container" #swiperContainer>
-    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+    <div
+      class="swiper__slide swiper__slide--duplicate"
+      #swiperSlide
+      (panLeft)="onPanLeft($event)"
+      (panRight)="onPanRight($event)"
+      (panEnd)="onPanEnd($event)"
+    >
       <ng-container
         [ngTemplateOutlet]="defaultSlide"
         [ngTemplateOutletContext]="{ $implicit: images[images.length - 1] }"
@@ -11,6 +17,9 @@
       class="swiper__slide"
       *ngFor="let image of images; index as index; first as first; last as last"
       #swiperSlide
+      (panLeft)="onPanLeft($event)"
+      (panRight)="onPanRight($event)"
+      (panEnd)="onPanEnd($event)"
     >
       <ng-container
         [ngTemplateOutlet]="defaultSlide"
@@ -18,7 +27,13 @@
       ></ng-container>
     </div>
 
-    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+    <div
+      class="swiper__slide swiper__slide--duplicate"
+      #swiperSlide
+      (panLeft)="onPanLeft($event)"
+      (panRight)="onPanRight($event)"
+      (panEnd)="onPanEnd($event)"
+    >
       <ng-container
         [ngTemplateOutlet]="defaultSlide"
         [ngTemplateOutletContext]="{ $implicit: images[0] }"
@@ -53,7 +68,7 @@
 </div>
 
 <ng-template #defaultSlide let-image>
-  <img class="swiper__image" [src]="image" loading="lazy" />
+  <img class="swiper__image" [src]="image" loading="lazy" draggable="false" />
 </ng-template>
 
 <ng-template #defaultNavigationButton>
@@ -71,4 +86,8 @@
   </div>
 </ng-template>
 
-<ng-template #defaultPagination></ng-template>
+<ng-template #defaultPagination>
+  <div class="swiper__pagination">
+    <div class="swiper__paginationContainer"></div>
+  </div>
+</ng-template>
