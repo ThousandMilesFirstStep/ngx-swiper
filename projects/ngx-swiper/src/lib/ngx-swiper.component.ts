@@ -72,7 +72,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   nextSlide(): void {
-    if (this.currentSlide === this.images.length) {
+    if (this.currentSlide === this.images.length - 1) {
       this.nextSlideOnLastElement();
 
       return;
@@ -84,7 +84,7 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prevSlide(): void {
-    if (this.currentSlide === -1) {
+    if (this.currentSlide === 0) {
       this.prevSlideOnFirstElement();
 
       return;
@@ -126,13 +126,13 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.currentSlide = 1;
+    this.translateContainer(-1 * this.slideWidth * (this.images.length + 1));
 
-    this.setContainerTranslation(-1 * this.slideWidth);
+    this.currentSlide = 0;
 
     setTimeout(() => {
-      this.translateContainer(this.getCurrentTranslation());
-    }, 0);
+      this.setContainerTranslation(this.getCurrentTranslation());
+    }, this.transitionDuration);
   }
 
   private prevSlideOnFirstElement(): void {
@@ -140,13 +140,13 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.currentSlide = this.images.length - 2;
+    this.translateContainer(0);
 
-    this.setContainerTranslation(-1 * this.slideWidth * this.images.length);
+    this.currentSlide = this.images.length - 1;
 
     setTimeout(() => {
-      this.translateContainer(this.getCurrentTranslation());
-    }, 0);
+      this.setContainerTranslation(this.getCurrentTranslation());
+    }, this.transitionDuration);
   }
 
   private translateContainer(translation: number): void {
