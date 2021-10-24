@@ -1,25 +1,35 @@
 <div class="swiper" #swiper (panLeft)="onPanLeft($event)" (panRight)="onPanRight($event)" (panEnd)="onPanEnd($event)">
   <div class="swiper__container" #swiperContainer>
-    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
-      <ng-container
-        [ngTemplateOutlet]="slideTemplate || defaultSlide"
-        [ngTemplateOutletContext]="{ $implicit: items[items.length - 1] }"
-      ></ng-container>
-    </div>
+    <ng-container *ngIf="isServer">
+      <div class="swiper__slide" #swiperSlide>
+        <ng-container
+          [ngTemplateOutlet]="slideTemplate || defaultSlide"
+          [ngTemplateOutletContext]="{ $implicit: items[0] }"
+        ></ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!isServer">
+      <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+        <ng-container
+          [ngTemplateOutlet]="slideTemplate || defaultSlide"
+          [ngTemplateOutletContext]="{ $implicit: items[items.length - 1] }"
+        ></ng-container>
+      </div>
 
-    <div class="swiper__slide" *ngFor="let item of items; index as index; first as first; last as last" #swiperSlide>
-      <ng-container
-        [ngTemplateOutlet]="slideTemplate || defaultSlide"
-        [ngTemplateOutletContext]="{ $implicit: item }"
-      ></ng-container>
-    </div>
+      <div class="swiper__slide" *ngFor="let item of items; index as index; first as first; last as last" #swiperSlide>
+        <ng-container
+          [ngTemplateOutlet]="slideTemplate || defaultSlide"
+          [ngTemplateOutletContext]="{ $implicit: item }"
+        ></ng-container>
+      </div>
 
-    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
-      <ng-container
-        [ngTemplateOutlet]="slideTemplate || defaultSlide"
-        [ngTemplateOutletContext]="{ $implicit: items[0] }"
-      ></ng-container>
-    </div>
+      <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
+        <ng-container
+          [ngTemplateOutlet]="slideTemplate || defaultSlide"
+          [ngTemplateOutletContext]="{ $implicit: items[0] }"
+        ></ng-container>
+      </div>
+    </ng-container>
   </div>
 
   <div class="swiper__navigation--prev" *ngIf="navigation" (click)="prevSlide()">

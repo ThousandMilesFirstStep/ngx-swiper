@@ -45,6 +45,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   @ViewChildren('swiperSlide') swiperSlidesRef!: QueryList<ElementRef<HTMLDivElement>>;
 
   currentSlide = 0;
+  isServer = isPlatformServer(this.platformId);
 
   private slideWidth!: number;
 
@@ -175,7 +176,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * things needed at the initialization of the swiper
    */
   private watchResize(): void {
-    if (isPlatformServer(this.platformId)) {
+    if (this.isServer) {
       return;
     }
 
