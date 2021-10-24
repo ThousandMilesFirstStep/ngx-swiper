@@ -1,12 +1,18 @@
+import { isPlatformServer } from '@angular/common';
 import {
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Inject,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   QueryList,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
   ViewChildren,
@@ -19,7 +25,7 @@ import { Subscription, timer } from 'rxjs';
   styleUrls: ['./ngx-swiper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() images!: string[];
 
   @Input() navigation = false;
@@ -35,16 +41,26 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('swiper') swiperRef!: ElementRef<HTMLDivElement>;
   @ViewChild('swiperContainer') swiperContainerRef!: ElementRef<HTMLDivElement>;
-  @ViewChildren('swiperSlide') swiperSlidesRef!: QueryList<
-    ElementRef<HTMLDivElement>
-  >;
+  @ViewChildren('swiperSlide') swiperSlidesRef!: QueryList<ElementRef<HTMLDivElement>>;
 
   private slideWidth!: number;
   private currentSlide = 0;
 
-  private loopSubscription?: Subscription;
+  private imagesChanged = false;
 
-  constructor() {}
+  private loopSubscription?: Subscription;
+  private resizeObserver?: ResizeObserver;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: string) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const previousImages = changes.images.previousValue;
+    const currentImages = changes.images.currentValue;
+
+    if (currentImages.length !== previousImages?.length && this.swiperRef) {
+      this.imagesChanged = true;
+    }
+  }
 
   ngOnInit(): void {
     if (this.loop) {
@@ -55,22 +71,31 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.slideWidth = this.swiperRef.nativeElement.clientWidth;
+    this.setSwiperElementsWidth();
+    this.watchResize();
+  }
 
-    // Set the width of the slides
-    this.swiperSlidesRef.forEach((slide) => {
-      slide.nativeElement.style.width = this.slideWidth + 'px';
-    });
+  ngAfterViewChecked(): void {
+    if (this.imagesChanged) {
+      this.setSwiperElementsWidth();
 
-    this.setContainerTranslation(-1 * this.slideWidth);
+      this.imagesChanged = false;
+    }
   }
 
   ngOnDestroy(): void {
     if (this.loopSubscription) {
       this.loopSubscription.unsubscribe();
     }
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   }
 
+  /**
+   * Navigate to the next slide
+   */
   nextSlide(): void {
     if (this.currentSlide === this.images.length - 1) {
       this.nextSlideOnLastElement();
@@ -83,6 +108,9 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     this.translateContainer(this.getCurrentTranslation());
   }
 
+  /**
+   * Navigate to the previous slide
+   */
   prevSlide(): void {
     if (this.currentSlide === 0) {
       this.prevSlideOnFirstElement();
@@ -95,6 +123,9 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     this.translateContainer(this.getCurrentTranslation());
   }
 
+  /**
+   * Event handler when a user stop swiping
+   */
   onPanEnd(event: any): void {
     if (event.deltaX < -1 * this.threshold) {
       this.nextSlide();
@@ -105,22 +136,65 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Event handler on a user left swipe
+   */
   onPanLeft(event: any): void {
     const originalPosition = this.getCurrentTranslation();
 
     this.setContainerTranslation(originalPosition + event.deltaX);
   }
 
+  /**
+   * Event handler on a user right swipe
+   */
   onPanRight(event: any): void {
     const originalPosition = this.getCurrentTranslation();
 
     this.setContainerTranslation(originalPosition + event.deltaX);
   }
 
+  /**
+   * Set the widths of the different slides and the container translation
+   */
+  private setSwiperElementsWidth(): void {
+    this.slideWidth = this.swiperRef.nativeElement.clientWidth;
+
+    // Set the width of the slides
+    this.swiperSlidesRef.forEach((slide) => {
+      slide.nativeElement.style.width = this.slideWidth + 'px';
+    });
+
+    this.setContainerTranslation(this.getCurrentTranslation());
+  }
+
+  /**
+   * Watch for the resize of the Swiper to recompute the different
+   * things needed at the initialization of the swiper
+   */
+  private watchResize(): void {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.setSwiperElementsWidth();
+    });
+
+    this.resizeObserver.observe(this.swiperRef.nativeElement);
+  }
+
+  /**
+   * Return the value of the translation for the current slide
+   */
   private getCurrentTranslation(): number {
     return -1 * this.slideWidth * (this.currentSlide + 1);
   }
 
+  /**
+   * Handle the transition to the next element when
+   * the current slide is already the last one
+   */
   private nextSlideOnLastElement(): void {
     if (!this.infinite) {
       return;
@@ -135,6 +209,10 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     }, this.transitionDuration);
   }
 
+  /**
+   * Handle the transition to the previous element when
+   * the current slide is already the first one
+   */
   private prevSlideOnFirstElement(): void {
     if (!this.infinite) {
       return;
@@ -149,6 +227,10 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     }, this.transitionDuration);
   }
 
+  /**
+   * Set the translation of the container with an animation whose
+   * duration is specified by the property `transitionDuration`
+   */
   private translateContainer(translation: number): void {
     const style = this.swiperContainerRef.nativeElement.style;
 
@@ -163,6 +245,9 @@ export class NgxSwiperComponent implements OnInit, AfterViewInit, OnDestroy {
     }, this.transitionDuration);
   }
 
+  /**
+   * Set the translation of the container to the value passed in parameter
+   */
   private setContainerTranslation(translation: number): void {
     this.swiperContainerRef.nativeElement.style.transform = `translate3d(${translation}px, 0, 0)`;
   }
