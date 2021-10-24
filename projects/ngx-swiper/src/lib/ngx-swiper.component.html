@@ -1,39 +1,20 @@
-<div class="swiper" #swiper>
+<div class="swiper" #swiper (panLeft)="onPanLeft($event)" (panRight)="onPanRight($event)" (panEnd)="onPanEnd($event)">
   <div class="swiper__container" #swiperContainer>
-    <div
-      class="swiper__slide swiper__slide--duplicate"
-      #swiperSlide
-      (panLeft)="onPanLeft($event)"
-      (panRight)="onPanRight($event)"
-      (panEnd)="onPanEnd($event)"
-    >
+    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
       <ng-container
         [ngTemplateOutlet]="slideTemplate || defaultSlide"
         [ngTemplateOutletContext]="{ $implicit: items[items.length - 1] }"
       ></ng-container>
     </div>
 
-    <div
-      class="swiper__slide"
-      *ngFor="let item of items; index as index; first as first; last as last"
-      #swiperSlide
-      (panLeft)="onPanLeft($event)"
-      (panRight)="onPanRight($event)"
-      (panEnd)="onPanEnd($event)"
-    >
+    <div class="swiper__slide" *ngFor="let item of items; index as index; first as first; last as last" #swiperSlide>
       <ng-container
         [ngTemplateOutlet]="slideTemplate || defaultSlide"
         [ngTemplateOutletContext]="{ $implicit: item }"
       ></ng-container>
     </div>
 
-    <div
-      class="swiper__slide swiper__slide--duplicate"
-      #swiperSlide
-      (panLeft)="onPanLeft($event)"
-      (panRight)="onPanRight($event)"
-      (panEnd)="onPanEnd($event)"
-    >
+    <div class="swiper__slide swiper__slide--duplicate" #swiperSlide>
       <ng-container
         [ngTemplateOutlet]="slideTemplate || defaultSlide"
         [ngTemplateOutletContext]="{ $implicit: items[0] }"
@@ -66,6 +47,22 @@
 
 <ng-template #defaultPagination>
   <div class="swiper__pagination">
-    <div class="swiper__paginationContainer"></div>
+    <div class="swiper__paginationContainer">
+      <div
+        class="swiper__paginationBullets"
+        [style.transform]="'translateX(' + (36 - 16 * currentSlide) + 'px)'"
+        [style.transitionDuration]="transitionDuration + 'ms'"
+      >
+        <div
+          *ngFor="let index of items | bullet"
+          class="swiper__paginationBullet"
+          [class.swiper__paginationBullet--current]="index === currentSlide"
+          [class.swiper__paginationBullet--prev]="index === currentSlide - 1"
+          [class.swiper__paginationBullet--next]="index === currentSlide + 1"
+          [class.swiper__paginationBullet--last]="index === items.length - 1"
+          [style.transitionDuration]="transitionDuration + 'ms'"
+        ></div>
+      </div>
+    </div>
   </div>
 </ng-template>

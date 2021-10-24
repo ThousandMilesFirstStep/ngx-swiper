@@ -10,12 +10,16 @@
   height: 100%;
   overflow: hidden;
 
+  // CONTAINER
+
   &__container {
     height: 100%;
     width: fit-content;
     display: flex;
     flex-wrap: nowrap;
   }
+
+  // SLIDE //
 
   &__slide {
     height: 100%;
@@ -29,6 +33,8 @@
     width: 100%;
     height: 100%;
   }
+
+  // NAVIGATION //
 
   &__navigation--prev,
   &__navigation--next {
@@ -62,6 +68,61 @@
   &:hover {
     .swiper__navigationButton {
       opacity: 0.85;
+    }
+  }
+
+  // PAGINATION
+
+  &__pagination {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  }
+
+  &__paginationContainer {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  &__paginationBullets {
+    display: flex;
+    align-items: center;
+    transition-property: transform;
+    transition-timing-function: ease;
+  }
+
+  &__paginationBullet {
+    width: 4px;
+    height: 4px;
+    border-radius: 100%;
+    margin-right: 12px;
+    background-color: rgba(242, 242, 242, 0.5);
+    transition-property: all;
+    transition-timing-function: ease;
+
+    &--current {
+      background-color: #f2f2f2;
+      width: 8px;
+      height: 8px;
+    }
+
+    &--next,
+    &--prev {
+      width: 6px;
+      height: 6px;
+    }
+
+    &--last {
+      margin-right: 0;
     }
   }
 }

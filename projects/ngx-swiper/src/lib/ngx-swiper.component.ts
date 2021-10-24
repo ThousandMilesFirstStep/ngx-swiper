@@ -44,8 +44,9 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   @ViewChild('swiperContainer') swiperContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChildren('swiperSlide') swiperSlidesRef!: QueryList<ElementRef<HTMLDivElement>>;
 
+  currentSlide = 0;
+
   private slideWidth!: number;
-  private currentSlide = 0;
 
   private itemsChanged = false;
 
