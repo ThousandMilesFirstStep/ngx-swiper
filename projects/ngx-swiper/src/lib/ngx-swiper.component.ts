@@ -26,13 +26,14 @@ import { Subscription, timer } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
-  @Input() images!: string[];
+  @Input() items!: unknown[];
 
   @Input() navigation = false;
   @Input() pagination = false;
   @Input() infinite = true;
   @Input() loop?: number;
 
+  @Input() slideTemplate?: TemplateRef<any>;
   @Input() navigationButtonTemplate?: TemplateRef<any>;
   @Input() paginationTemplate?: TemplateRef<any>;
 
@@ -46,7 +47,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   private slideWidth!: number;
   private currentSlide = 0;
 
-  private imagesChanged = false;
+  private itemsChanged = false;
 
   private loopSubscription?: Subscription;
   private resizeObserver?: ResizeObserver;
@@ -54,11 +55,11 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   constructor(@Inject(PLATFORM_ID) private platformId: string) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    const previousImages = changes.images.previousValue;
-    const currentImages = changes.images.currentValue;
+    const previousItems = changes.items.previousValue;
+    const currentItems = changes.items.currentValue;
 
-    if (currentImages.length !== previousImages?.length && this.swiperRef) {
-      this.imagesChanged = true;
+    if (currentItems.length !== previousItems?.length && this.swiperRef) {
+      this.itemsChanged = true;
     }
   }
 
@@ -76,10 +77,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   }
 
   ngAfterViewChecked(): void {
-    if (this.imagesChanged) {
+    if (this.itemsChanged) {
       this.setSwiperElementsWidth();
 
-      this.imagesChanged = false;
+      this.itemsChanged = false;
     }
   }
 
@@ -97,7 +98,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Navigate to the next slide
    */
   nextSlide(): void {
-    if (this.currentSlide === this.images.length - 1) {
+    if (this.currentSlide === this.items.length - 1) {
       this.nextSlideOnLastElement();
 
       return;
@@ -200,7 +201,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
       return;
     }
 
-    this.translateContainer(-1 * this.slideWidth * (this.images.length + 1));
+    this.translateContainer(-1 * this.slideWidth * (this.items.length + 1));
 
     this.currentSlide = 0;
 
@@ -220,7 +221,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
 
     this.translateContainer(0);
 
-    this.currentSlide = this.images.length - 1;
+    this.currentSlide = this.items.length - 1;
 
     setTimeout(() => {
       this.setContainerTranslation(this.getCurrentTranslation());
