@@ -1,11 +1,37 @@
 {
-  "name": "ngx-swiper",
+  "name": "@tmfs/ngx-swiper",
   "version": "0.0.1",
+  "author": {
+    "name": "Grégoire Rabasse"
+  },
+  "keywords": [
+    "swiper",
+    "swipe",
+    "slider",
+    "slide",
+    "touch",
+    "mobile",
+    "cordova",
+    "hammerjs",
+    "app",
+    "framework",
+    "carousel",
+    "gallery",
+    "plugin",
+    "ionic",
+    "angular"
+  ],
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "^12.2.0",
     "@angular/core": "^12.2.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThousandMilesFirstStep/ngx-swiper.git"
+  },
+  "private": false
 }
