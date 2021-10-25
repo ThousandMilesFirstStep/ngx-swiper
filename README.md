@@ -1,27 +1,63 @@
-# NgxSwiper
+# Angular Swiper
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.10.
+This library is a general-purpose, lightweight and dependency-free swiper to be used in Angular applications.  
+By default, you can pass an array of images url to the `items` property to have a fully working images swiper. To improve the performances, the swiper uses the `OnPush` change detection strategy and the images are lazy loaded.
 
-## Development server
+If this behavior, or the usage of images, does not suit your needs, you can pass any kind of item to the `items` property and customize the slides with a `ng-template` passed to the `slideTemplate` property.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Installation
 
-## Code scaffolding
+```shell
+$ npm install --save @tmfs/ngx-swiper
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Or, if you're using [Yarn](https://yarnpkg.com/)
 
-## Build
+```shell
+$ yarn add @tmfs/ngx-swiper
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Then add the module `NgxSwiperModule` to your application.
 
-## Running unit tests
+## Usage
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```html
+<ngx-swiper
+  [items]="items"
+  [navigation]="false"
+  [pagination]="false"
+  [infinite]="true"
+  [loop]="5000"
+  [slideTemplate]="slideTemplate"
+  [navigationButtonTemplate]="navigationTemplate"
+  [paginationTemplate]="paginationTemplate"
+  [transitionDuration]="400"
+  [threshold]="30"
+>
+</ngx-swiper>
 
-## Running end-to-end tests
+<ng-template #slideTemplate let-item>
+  <!-- YOUR CUSTOM SLIDE -->
+</ng-template>
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+<ng-template #navigationTemplate>
+  <!-- YOUR CUSTOM NAVIGATION BUTTON -->
+</ng-template>
 
-## Further help
+<ng-template #paginationTemplate>
+  <!-- YOUR CUSTOM PAGINATION -->
+</ng-template>
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+| Property                 | Default    | Description                                                             |
+| ------------------------ | ---------- | ----------------------------------------------------------------------- |
+| items                    | _required_ | The array of items to display in the swiper                             |
+| navigation               | false      | Whether to display the navigation arrows                                |
+| pagination               | false      | Whether to display the pagination dots                                  |
+| infinite                 | true       | Allow to navigate between slides indefinitely                           |
+| loop                     | undefined  | The number of milliseconds a slide stays before sliding to the next one |
+| slideTemplate            | undefined  | A custom template to replace the default slide template                 |
+| navigationButtonTemplate | undefined  | A custom template for the navigation button                             |
+| paginationTemplate       | undefined  | A custom template for the pagination at the bottom of the swiper        |
+| transitionDuration       | 400        | The time in milliseconds for the Swiper transitions                     |
+| threshold                | 30         | The number of px that must be swiped before going to next/prev slide    |
