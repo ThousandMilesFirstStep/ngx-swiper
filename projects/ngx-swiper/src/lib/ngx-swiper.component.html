@@ -40,7 +40,11 @@
     <ng-container [ngTemplateOutlet]="navigationButtonTemplate || defaultNavigationButton"></ng-container>
   </div>
 
-  <ng-container *ngIf="pagination" [ngTemplateOutlet]="paginationTemplate || defaultPagination"></ng-container>
+  <ng-container
+    *ngIf="pagination"
+    [ngTemplateOutlet]="paginationTemplate || defaultPagination"
+    [ngTemplateOutletContext]="{ currentSlide }"
+  ></ng-container>
 </div>
 
 <ng-template #defaultSlide let-image>
@@ -60,7 +64,7 @@
     <div class="swiper__paginationContainer">
       <div
         class="swiper__paginationBullets"
-        [style.transform]="'translateX(' + (36 - 16 * currentSlide) + 'px)'"
+        [style.transform]="'translateX(' + paginationTranslation + 'px)'"
         [style.transitionDuration]="transitionDuration + 'ms'"
       >
         <div

@@ -46,6 +46,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
 
   currentSlide = 0;
   isServer = isPlatformServer(this.platformId);
+  paginationTranslation!: number;
 
   private slideWidth!: number;
 
@@ -71,6 +72,8 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
         this.nextSlide();
       });
     }
+
+    this.setPaginationTranslation();
   }
 
   ngAfterViewInit(): void {
@@ -102,13 +105,14 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   nextSlide(): void {
     if (this.currentSlide === this.items.length - 1) {
       this.nextSlideOnLastElement();
-
+      this.setPaginationTranslation();
       return;
     }
 
     this.currentSlide++;
 
     this.translateContainer(this.getCurrentTranslation());
+    this.setPaginationTranslation();
   }
 
   /**
@@ -117,13 +121,14 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   prevSlide(): void {
     if (this.currentSlide === 0) {
       this.prevSlideOnFirstElement();
-
+      this.setPaginationTranslation();
       return;
     }
 
     this.currentSlide--;
 
     this.translateContainer(this.getCurrentTranslation());
+    this.setPaginationTranslation();
   }
 
   /**
@@ -253,5 +258,12 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    */
   private setContainerTranslation(translation: number): void {
     this.swiperContainerRef.nativeElement.style.transform = `translate3d(${translation}px, 0, 0)`;
+  }
+
+  /**
+   * Set the translation of the container with the pagination dots
+   */
+  private setPaginationTranslation(): void {
+    this.paginationTranslation = (this.currentSlide > 0 ? 32 : 34) - 16 * this.currentSlide;
   }
 }
