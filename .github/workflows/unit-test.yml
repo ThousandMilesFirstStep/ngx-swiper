@@ -1,0 +1,18 @@
+name: Run the unit tests of the library
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Setup
+        run: yarn install --frozen-lockfile
+
+      - name: Test
+        run: |
+          yarn test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
