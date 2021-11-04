@@ -12,6 +12,7 @@ import {
   OnInit,
   PLATFORM_ID,
   QueryList,
+  SimpleChange,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -64,15 +65,11 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
     if (currentItems.length !== previousItems?.length && this.swiperRef) {
       this.itemsChanged = true;
     }
+
+    this.handleLoopValueChange(changes.loop);
   }
 
   ngOnInit(): void {
-    if (this.loop) {
-      this.loopSubscription = timer(0, this.loop).subscribe(() => {
-        this.nextSlide();
-      });
-    }
-
     this.setPaginationTranslation();
   }
 
@@ -265,5 +262,23 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    */
   private setPaginationTranslation(): void {
     this.paginationTranslation = (this.currentSlide > 0 ? 32 : 34) - 16 * this.currentSlide;
+  }
+
+  /**
+   * If the loop property changes, remove the current timer and create the new one
+   */
+  private handleLoopValueChange(change: SimpleChange): void {
+    if (change.currentValue !== change.previousValue) {
+      if (this.loopSubscription) {
+        this.loopSubscription.unsubscribe();
+        delete this.loopSubscription;
+      }
+
+      if (change.currentValue) {
+        this.loopSubscription = timer(this.loop, this.loop).subscribe(() => {
+          this.nextSlide();
+        });
+      }
+    }
   }
 }
