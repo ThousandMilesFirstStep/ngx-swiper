@@ -1,6 +1,6 @@
 {
   "name": "@tmfs/ngx-swiper",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": {
     "name": "Grégoire Rabasse"
   },
@@ -23,8 +23,8 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "^12.2.0",
-    "@angular/core": "^12.2.0"
+    "@angular/common": "^12.2.0 || ^13.0.0",
+    "@angular/core": "^12.2.0 || ^13.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
