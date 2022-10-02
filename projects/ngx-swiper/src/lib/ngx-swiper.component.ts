@@ -268,13 +268,13 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * If the loop property changes, remove the current timer and create the new one
    */
   private handleLoopValueChange(change: SimpleChange): void {
-    if (change.currentValue !== change.previousValue) {
+    if (change?.currentValue !== change?.previousValue) {
       if (this.loopSubscription) {
         this.loopSubscription.unsubscribe();
         delete this.loopSubscription;
       }
 
-      if (change.currentValue) {
+      if (change?.currentValue) {
         this.loopSubscription = timer(this.loop, this.loop).subscribe(() => {
           this.nextSlide();
         });

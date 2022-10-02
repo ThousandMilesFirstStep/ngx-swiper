@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { ChangeDetectionStrategy, SimpleChange } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgxSwiperComponent } from './ngx-swiper.component';
@@ -13,13 +13,17 @@ describe('NgxSwiperComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NgxSwiperComponent, BulletPipe],
-    }).compileComponents();
+    })
+      .overrideComponent(NgxSwiperComponent, { set: { changeDetection: ChangeDetectionStrategy.Default } })
+      .compileComponents();
   });
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NgxSwiperComponent);
     component = fixture.componentInstance;
     component.items = DEFAULT_ITEMS;
+
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -61,8 +65,6 @@ describe('NgxSwiperComponent', () => {
   });
 
   it('should be infinite by default', () => {
-    fixture.detectChanges();
-
     component.nextSlide();
     expect(component.currentSlide).toBe(1);
 
@@ -82,6 +84,7 @@ describe('NgxSwiperComponent', () => {
     component.loop = 1000;
 
     fixture.detectChanges();
+
     component.ngOnChanges({
       loop: new SimpleChange(undefined, component.loop, true),
       items: new SimpleChange([], [], false),
@@ -107,7 +110,6 @@ describe('NgxSwiperComponent', () => {
     const nextSlideSpy = spyOn(component, 'nextSlide').and.callThrough();
     const deltaX = component.threshold + 1;
 
-    fixture.detectChanges();
     component.onPanEnd({ deltaX: -1 * deltaX });
 
     expect(nextSlideSpy).toHaveBeenCalledTimes(1);
@@ -118,7 +120,6 @@ describe('NgxSwiperComponent', () => {
     const prevSlideSpy = spyOn(component, 'prevSlide').and.callThrough();
     const deltaX = component.threshold + 1;
 
-    fixture.detectChanges();
     component.onPanEnd({ deltaX });
 
     expect(prevSlideSpy).toHaveBeenCalledTimes(1);
@@ -130,7 +131,6 @@ describe('NgxSwiperComponent', () => {
     const prevSlideSpy = spyOn(component, 'prevSlide').and.callThrough();
     const deltaX = component.threshold;
 
-    fixture.detectChanges();
     component.onPanEnd({ deltaX: -1 * deltaX });
     component.onPanEnd({ deltaX });
 
