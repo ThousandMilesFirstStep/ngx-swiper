@@ -16,7 +16,7 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewChild,
-  ViewChildren,
+  ViewChildren
 } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 
@@ -56,7 +56,7 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
   private loopSubscription?: Subscription;
   private resizeObserver?: ResizeObserver;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: string) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: string) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     const previousItems = changes.items.previousValue;
@@ -66,7 +66,9 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
       this.itemsChanged = true;
     }
 
-    this.handleLoopValueChange(changes.loop);
+    if (changes.loop) {
+      this.handleLoopValueChange(changes.loop);
+    }
   }
 
   ngOnInit(): void {
@@ -100,6 +102,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Navigate to the next slide
    */
   nextSlide(): void {
+    if (this.items.length < 2) {
+      return;
+    }
+
     if (this.currentSlide === this.items.length - 1) {
       this.nextSlideOnLastElement();
       this.setPaginationTranslation();
@@ -116,6 +122,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Navigate to the previous slide
    */
   prevSlide(): void {
+    if (this.items.length < 2) {
+      return;
+    }
+
     if (this.currentSlide === 0) {
       this.prevSlideOnFirstElement();
       this.setPaginationTranslation();
@@ -132,6 +142,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Event handler when a user stop swiping
    */
   onPanEnd(event: any): void {
+    if (this.items.length < 2) {
+      return;
+    }
+
     if (event.deltaX < -1 * this.threshold) {
       this.nextSlide();
     } else if (event.deltaX > this.threshold) {
@@ -145,6 +159,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Event handler on a user left swipe
    */
   onPanLeft(event: any): void {
+    if (this.items.length < 2) {
+      return;
+    }
+
     const originalPosition = this.getCurrentTranslation();
 
     this.setContainerTranslation(originalPosition + event.deltaX);
@@ -154,6 +172,10 @@ export class NgxSwiperComponent implements OnChanges, OnInit, AfterViewInit, Aft
    * Event handler on a user right swipe
    */
   onPanRight(event: any): void {
+    if (this.items.length < 2) {
+      return;
+    }
+
     const originalPosition = this.getCurrentTranslation();
 
     this.setContainerTranslation(originalPosition + event.deltaX);
